@@ -22,7 +22,7 @@ app = FastAPI(
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],          # 允許發出請求的網域
-    allow_credentials=True,       # 是否允許攜帶Cookie或認證資訊
+    allow_credentials=False,       # 是否允許攜帶Cookie或認證資訊
     allow_methods=["*"],          # 允許的HTTP方法
     allow_headers=["*"],          # 允許的HTTP Headers
 )
