@@ -1,32 +1,30 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.core.config import settings  # 引入剛剛寫好的 settings
+from app.core.config import settings  # 引入settings
 from app.api import chat, contracts, scenarios
 from app.core.exceptions import RentGuardException, rentguard_exception_handler
-from app.api import chat, contracts, scenarios, news  # 🌟 補上 news
+from app.api import chat, contracts, scenarios, news  # news
 
-# 🌟 新增這兩行：引入資料庫引擎與模型
+# 引入資料庫引擎與模型
 from app.db.database import engine, Base
-from app.models import chat as chat_model # 雖然檔名也是 chat，但為了跟 api 的 chat 區分，這裡取別名
+from app.models import chat as chat_model # 區分api和chat 
 
-# 🌟 新增這行：指示 SQLAlchemy 在啟動時根據模型建立所有資料表
+# 指示SQLAlchemy在啟動時根據模型建立所有資料表
 Base.metadata.create_all(bind=engine)
 
-# 使用 settings 裡面的變數來初始化 FastAPI
+# 使用settings裡面的變數來初始化FastAPI
 app = FastAPI(
     title=settings.PROJECT_NAME,
     version=settings.VERSION,
     description="提供租屋法律諮詢、合約分析與情境建議的後端服務"
 )
-# 2. 設定 CORS 允許的來源網域
-# 在開發階段，我先設定為 ["*"] 允許所有來源連線。
-# 未來專案要正式上線時，記得把它改成前端真正的網址，例如 ["https://rentguard-ai.com"]
+# 先設定為 ["*"] 允許所有來源連線。之後改成前端的網址
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],          # 允許發出請求的網域
-    allow_credentials=True,       # 是否允許攜帶 Cookie 或認證資訊
-    allow_methods=["*"],          # 允許的 HTTP 方法 (GET, POST, PUT, DELETE 等)
-    allow_headers=["*"],          # 允許的 HTTP Headers
+    allow_credentials=True,       # 是否允許攜帶Cookie或認證資訊
+    allow_methods=["*"],          # 允許的HTTP方法
+    allow_headers=["*"],          # 允許的HTTP Headers
 )
 
 app.add_exception_handler(RentGuardException, rentguard_exception_handler)

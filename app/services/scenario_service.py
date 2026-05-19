@@ -37,7 +37,7 @@ def generate_scenario_advice(category: str, details: str) -> dict:
         clean_json_str = response.content.replace("```json", "").replace("```", "").strip()
         return json.loads(clean_json_str)
     except Exception as e:
-        # 這裡我把錯誤拋給剛剛寫好的全域例外處理器
+        
         raise RentGuardException(
             status_code=500, 
             message=f"生成情境建議時發生錯誤，請稍後再試。(錯誤細節: {str(e)})"

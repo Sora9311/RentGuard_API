@@ -8,7 +8,7 @@ class NewsItem(BaseModel):
     published_at: str
     source: str
 
-# API 回傳的總格式 (包含多篇新聞)
+# API回傳的總格式
 class NewsResponse(BaseModel):
     status: str
     total_results: int

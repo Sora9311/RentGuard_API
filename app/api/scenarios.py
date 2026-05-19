@@ -9,8 +9,7 @@ async def get_scenario_categories():
     """
     取得所有預設的租屋糾紛情境分類，供前端選單使用。
     """
-    # ⚠️ [標註需求：前端 UI]
-    # 這裡的分類可以與前端討論後寫死，或是未來開一個資料表來維護。
+    
     return {
         "categories": [
             {"id": "deposit", "name": "押金扣留"},

@@ -1,9 +1,7 @@
 from pydantic import BaseModel, Field
 from typing import List
 
-# ⚠️ [標註需求：前端 UI]
-# 請與前端確認：目前後端預期接收「純文字」格式的合約。
-# 若前端希望直接上傳 PDF 或圖片，這裡的 API 設計必須改為 Multipart Form Data。
+# 若直接上傳 PDF 或圖片，API改為Multipart Form Data。
 class ContractAnalyzeRequest(BaseModel):
     contract_text: str = Field(..., description="完整的租屋合約純文字內容")
 

@@ -12,19 +12,19 @@ llm = ChatGoogleGenerativeAI(
 
 def generate_rentguard_response(query: str, session_id: str, db: Session) -> dict:
     
-    # 🌟 1. 準備一個空字串來放對話紀錄
+    # 空字串用來放對話紀錄
     chat_history_str = "無歷史紀錄。\n"
 
     if session_id:
-        # 🌟 2. 從資料庫撈取這個 session_id 過去的對話 (為了避免字數爆掉，我們只拿最近的 10 筆)
+        # 從資料庫撈取這個session_id過去的對話
         past_messages = db.query(ChatHistory).filter(
             ChatHistory.session_id == session_id
         ).order_by(ChatHistory.id.desc()).limit(10).all()
         
-        # 因為 order_by desc 是從最新排到最舊，我們要把它反轉回來，讓時間順序正確
+        # 確保時間順序正確
         past_messages.reverse()
 
-        # 🌟 3. 如果有歷史紀錄，就把紀錄組成字串
+        # 如果有歷史紀錄，就把紀錄組成字串
         if past_messages:
             chat_history_str = ""
             for msg in past_messages:
@@ -36,7 +36,7 @@ def generate_rentguard_response(query: str, session_id: str, db: Session) -> dic
         db.add(user_message)
         db.commit()
 
-    # 🌟 4. 修改 Prompt，把 {chat_history} 塞進去讓 AI 參考
+    # 修改Prompt，把 {chat_history} 給 AI 參考
     prompt_template = PromptTemplate.from_template(
         "你是一個專業的台灣租屋法律顧問「RentGuard AI」。\n"
         "請以客觀、友善且具建設性的語氣，回答房客的問題。\n\n"
@@ -50,15 +50,15 @@ def generate_rentguard_response(query: str, session_id: str, db: Session) -> dic
     chain = prompt_template | llm
 
     try:
-        # 🌟 5. 將歷史對話與最新問題一起傳給 Gemini
+        # 將歷史對話與最新問題一起傳給AI
         response = chain.invoke({
             "query": query, 
             "chat_history": chat_history_str
         })
         answer = response.content
-        sources = ["(尚未串接 RAG 知識庫，此為 Gemini 基礎生成)"]
+        sources = ["(尚未串接 RAG 知識庫，此為 AI 基礎生成)"]
         
-        # 儲存 AI 的回答
+        # 儲存AI的回答
         if session_id:
             ai_message = ChatHistory(session_id=session_id, role="ai", content=answer)
             db.add(ai_message)
