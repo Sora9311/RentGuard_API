@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 from app.models.chat import ChatHistory
 
 llm = ChatGoogleGenerativeAI(
-    model="gemini-1.5-flash",
+    model="gemini-pro",
     google_api_key=settings.GEMINI_API_KEY,
     temperature=0.2 
 )
