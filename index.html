@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>租屋知識資料庫</title>
+
+    <style>
+        /* 全域樣式設定：換上親和力字體組合，並將內文字體統一加粗至 500 */
+        body {
+            font-family: Quicksand, "Nunito", -apple-system, BlinkMacSystemFont, "PingFang TC", "Heiti TC", "Segoe UI Historic", "Microsoft JhengHei", sans-serif;
+            background-color: #fdfcf9; 
+            color: #555555; 
+            margin: 0;
+            padding: 20px;
+            font-weight: 500; /* 全域內文加粗，呈現厚實、溫潤的視覺感 */
+        }
+
+        /* 頂部大標題：維持原本大小，套用新版優雅燕麥奶色調 */
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 30px 0; 
+            background-color: #eae4d3; 
+            color: #635c4f; 
+            border-radius: 12px;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 2.8rem; 
+            font-weight: 800; /* 維持 800 特粗體 */
+            letter-spacing: 3px; /* 維持 3px 原本間距 */
+        }
+
+        /* 主要區塊：左右雙欄 Flexbox 佈局 */
+        .main-container {
+            display: flex;
+            gap: 24px;
+            max-width: 1200px;
+            margin: 0 auto;
+            align-items: flex-start;
+        }
+
+        /* 左側資訊欄 */
+        .left-column {
+            flex: 2;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* 右側表單欄 */
+        .right-column {
+            flex: 1;
+            position: sticky;
+            top: 20px;
+        }
+
+        /* 通用卡片樣式 */
+        .card {
+            background-color: #ffffff;
+            padding: 24px;
+            border-radius: 12px;
+            border: 1px solid #f0ede6; 
+        }
+
+        .card h2 {
+            margin-top: 0;
+            color: #6e6556; 
+            font-size: 1.4rem; 
+            border-bottom: 2px solid #eae4d3; 
+            padding-bottom: 8px; 
+            margin-bottom: 16px; 
+            letter-spacing: 1px;
+            font-weight: 700; /* 讓卡片標題比一般內文再稍微更有分量 */
+        }
+
+        /* 列表樣式 */
+        ul {
+            padding-left: 20px;
+            margin: 0;
+        }
+
+        li {
+            margin-bottom: 12px;
+            line-height: 1.6; 
+            color: #666666; 
+        }
+
+        li a {
+            color: #948671; 
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        li a:hover {
+            text-decoration: underline;
+        }
+
+        /* 功能選單按鈕樣式 */
+        .btn-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 12px;
+        }
+
+        .btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 14px;
+            background-color: #ffffff;
+            color: #726857; 
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+            border: 2px solid #eae4d3; 
+            transition: all 0.3s ease; 
+            letter-spacing: 0.5px;
+        }
+
+        .btn:hover {
+            background-color: #f7f5f0; 
+            color: #5c5344; 
+            border-color: #ded9cb; 
+        }
+
+        /* 地區快捷查詢列樣式 */
+        .filter-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px; 
+            background-color: #faf9f6; 
+            padding: 10px 15px;
+            border-radius: 8px;
+            border: 1px solid #f0ede6;
+        }
+
+        .filter-label {
+            font-weight: bold;
+            color: #726857; 
+            font-size: 0.95rem;
+            letter-spacing: 0.5px;
+        }
+
+        .filter-tags {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .tag-btn {
+            background-color: #ffffff;
+            border: 1px solid #e3ded5; 
+            color: #8c8273; 
+            padding: 6px 14px;
+            font-size: 0.85rem;
+            border-radius: 20px; 
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: bold;
+        }
+
+        /* 被選中/懸停狀態 */
+        .tag-btn.active, .tag-btn:hover {
+            background-color: #756a59; 
+            color: #ffffff;
+            border-color: #756a59; 
+        }
+
+        /* 論壇貼文樣式設定 */
+        .forum-post {
+            border-left: 4px solid #eae4d3; 
+            padding-left: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .forum-post:last-child {
+            margin-bottom: 0;
+        }
+
+        .forum-meta {
+            font-size: 0.85rem;
+            color: #9c9181; 
+            margin-bottom: 6px;
+            font-weight: bold;
+            letter-spacing: 0.5px;
+        }
+
+        /* 地區標籤樣式 */
+        .region-badge {
+            background-color: #f0ede4; 
+            color: #726857; 
+            padding: 2px 6px; 
+            border-radius: 4px;
+            font-size: 0.8rem;
+            margin-right: 6px; 
+        }
+
+        .forum-content {
+            font-size: 0.95rem;
+            line-height: 1.5; 
+            color: #666; 
+            margin-bottom: 8px; 
+        }
+
+        .forum-action-btn {
+            background: none;
+            border: 1px solid #e3ded5; 
+            color: #8c8273; 
+            padding: 4px 10px; 
+            font-size: 0.8rem;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .forum-action-btn:hover {
+            background-color: #fdfcfb; 
+            border-color: #9c9181; 
+            color: #6e6556; 
+        }
+
+        .share-box {
+            background-color: #faf9f6; 
+            border: 1px dashed #ded9cb; 
+            padding: 15px; 
+            border-radius: 8px;
+            margin-top: 15px; 
+            text-align: center;
+        }
+
+        .share-link {
+            color: #756a59; 
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.95rem;
+        }
+
+        .share-link:hover {
+            text-decoration: underline;
+        }
+
+        /* 右側表單樣式 */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+            color: #6e6556; 
+            font-size: 1.05rem; 
+        }
+
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #e3ded5; 
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-size: 1rem;
+            background-color: #fdfdfc; 
+            transition: border-color 0.3s;
+            color: #555; 
+            resize: vertical;
+            font-weight: 500;
+        }
+
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #9c9181; 
+        }
+
+        /* 送出按鈕 */
+        .submit-btn {
+            width: 100%;
+            padding: 14px;
+            background-color: #756a59; 
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            letter-spacing: 1px;
+        }
+
+        .submit-btn:hover {
+            background-color: #63594a; 
+        }
+
+        /* 響應式網頁設計 */
+        @media (max-width: 768px) {
+            .main-container {
+                flex-direction: column;
+            }
+            .right-column {
+                position: static;
+                width: 100%;
+                box-sizing: border-box;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>租屋知識資料庫</h1>
+    </header>
+
+    <div class="main-container">
+        
+        <div class="left-column">
+            
+            <div class="card">
+                <h2>📢 最新公告</h2>
+                <ul>
+                    <li>2026/03：近期租金普遍上漲，建議提早找房並多比較價格。</li>
+                    <li>政府持續推動租屋補助政策，符合資格者記得申請。</li>
+                    <li>注意假房東詐騙，切勿先匯款或提供個資。</li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <h2>🔍 快捷功能選單</h2>
+                <div class="btn-grid">
+                    <a href="law.html" class="btn">租屋法律查詢</a>
+                    <a href="price.html" class="btn">租金行情查詢</a>
+                    <a href="notice.html" class="btn">租屋注意事項</a>
+                    <a href="links.html" class="btn">推薦租屋網站</a>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>💬 租屋經驗分享論壇</h2>
+                
+                <div class="filter-container">
+                    <span class="filter-label">地區快捷查詢：</span>
+                    <div class="filter-tags">
+                        <button class="tag-btn active">全部</button>
+                        <button class="tag-btn">台北市</button>
+                        <button class="tag-btn">新北市</button>
+                        <button class="tag-btn">基隆/桃園</button>
+                        <button class="tag-btn">中南部地區</button>
+                    </div>
+                </div>
+                
+                <div class="forum-post">
+                    <div class="forum-meta"><span class="region-badge">台北市</span>分類：押金糾紛 | 2 天前</div>
+                    <div class="forum-content">在大安區退租時房東以牆壁有自然污損為由，硬扣了我 5000 元押金。大家簽約時記得把房間現況拍照留存存證！</div>
+                    <button class="forum-action-btn">感謝分享，我會留意</button>
+                </div>
+
+                <hr style="border: 0; border-top: 1px dashed #f0ede6; margin: 15px 0;">
+
+                <div class="forum-post">
+                    <div class="forum-meta"><span class="region-badge">新北市</span>分類：看房注意 | 1 週前</div>
+                    <div class="forum-content">淡水某大學附近的頂樓加蓋夏天真的非常熱，冷氣電費驚人，且水壓很不穩定，建議學弟妹看房時一定要多注意。</div>
+                    <button class="forum-action-btn">感謝分享，我會留意</button>
+                </div>
+
+                <div class="share-box">
+                    <a href="share.html" class="share-link">想分享你的租屋經驗、幫大家避雷嗎？ 點此前往發表</a>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>🔗 推薦租屋網站</h2>
+                <ul>
+                    <li><a href="https://www.591.com.tw/" target="_blank">591房屋交易網</a></li>
+                    <li><a href="https://www.rakuya.com.tw/" target="_blank">樂屋網</a></li>
+                </ul>
+            </div>
+
+        </div>
+
+        <div class="right-column card">
+            <h2>💬 租屋諮詢與提問</h2>
+            <form action="#" method="POST">
+                <div class="form-group">
+                    <label for="message">您想詢問的問題：</label>
+                    <textarea id="message" name="message" rows="8" placeholder="請輸入您的問題..." required></textarea>
+                </div>
+
+                <button type="submit" class="submit-btn">送出諮詢問題</button>
+            </form>
+        </div>
+
+    </div>
+
+</body>
+</html>
