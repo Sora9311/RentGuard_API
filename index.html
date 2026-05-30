@@ -275,6 +275,7 @@
             border-color: #9c9181; 
         }
 
+
         /* 送出按鈕 */
         .submit-btn {
             width: 100%;
@@ -381,7 +382,7 @@
 
         <div class="right-column card">
             <h2>💬 租屋諮詢與提問</h2>
-            <form action="#" method="POST">
+            <form id="consult-form">
                 <div class="form-group">
                     <label for="message">您想詢問的問題：</label>
                     <textarea id="message" name="message" rows="8" placeholder="請輸入您的問題..." required></textarea>
@@ -392,6 +393,52 @@
         </div>
 
     </div>
+<script>
+        document.getElementById('consult-form').addEventListener('submit', function(e) {
+            // 阻止網頁預設的跳轉行為
+            e.preventDefault();
+
+            // 取得使用者輸入的問題
+            const messageText = document.getElementById('message').value;
+
+            // 您的 Render 後端 API 網址 (請確認後端有這個路由)
+            const apiUrl = "https://rentguard-api.onrender.com/api/consult"; 
+
+            // 更改按鈕狀態，給予使用者回饋
+            const submitBtn = document.querySelector('.submit-btn');
+            const originalText = submitBtn.innerText;
+            submitBtn.innerText = "傳送中...";
+            submitBtn.disabled = true;
+
+            // 發送請求到 Render 伺服器
+            fetch(apiUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ question: messageText }) 
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('網路請求失敗');
+                }
+                return response.json();
+            })
+            .then(data => {
+                alert("問題送出成功！");
+                document.getElementById('message').value = ""; // 清空輸入框
+            })
+            .catch(error => {
+                console.error('發生錯誤:', error);
+                alert("送出失敗，請按 F12 檢查錯誤訊息。");
+            })
+            .finally(() => {
+                // 恢復按鈕狀態
+                submitBtn.innerText = originalText;
+                submitBtn.disabled = false;
+            });
+        });
+    </script>
 
 </body>
 </html>
