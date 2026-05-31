@@ -389,9 +389,9 @@
                 </div>
 
                 <button type="submit" id="submit-btn" class="submit-btn">送出諮詢問題</button>
-            </form>
+
             </form> <div id="response-container" style="display: none; margin-top: 20px; padding: 15px; background-color: #faf9f6; border: 1px dashed #ded9cb; border-radius: 8px;">
-                <h3 style="margin-top: 0; color: #756a59; font-size: 1.1rem; border-bottom: 1px solid #f0ede6; padding-bottom: 8px; margin-bottom: 12px;">💡 RentGuard AI 解析</h3>
+                <h3 style="margin-top: 0; color: #756a59; font-size: 1.1rem; border-bottom: 1px solid #f0ede6; padding-bottom: 8px; margin-bottom: 12px;"> RentGuard AI 解析</h3>
                 
                 <div id="ai-answer" style="color: #555; line-height: 1.6; font-size: 0.95rem; white-space: pre-wrap;"></div>
                 
@@ -400,52 +400,6 @@
         </div>
 
     </div>
-<script>
-        document.getElementById('consult-form').addEventListener('submit', function(e) {
-            // 阻止網頁預設的跳轉行為
-            e.preventDefault();
-
-            // 取得使用者輸入的問題
-            const messageText = document.getElementById('message').value;
-
-            // 您的 Render 後端 API 網址 (請確認後端有這個路由)
-            const apiUrl = "https://rentguard-api.onrender.com/api/consult"; 
-
-            // 更改按鈕狀態，給予使用者回饋
-            const submitBtn = document.querySelector('.submit-btn');
-            const originalText = submitBtn.innerText;
-            submitBtn.innerText = "傳送中...";
-            submitBtn.disabled = true;
-
-            // 發送請求到 Render 伺服器
-            fetch(apiUrl, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ question: messageText }) 
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('網路請求失敗');
-                }
-                return response.json();
-            })
-            .then(data => {
-                alert("問題送出成功！");
-                document.getElementById('message').value = ""; // 清空輸入框
-            })
-            .catch(error => {
-                console.error('發生錯誤:', error);
-                alert("送出失敗，請按 F12 檢查錯誤訊息。");
-            })
-            .finally(() => {
-                // 恢復按鈕狀態
-                submitBtn.innerText = originalText;
-                submitBtn.disabled = false;
-            });
-        });
-    </script>
 
 <script>
         // 監聽表單的送出事件
