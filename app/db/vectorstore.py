@@ -2,7 +2,7 @@
 # app/db/vectorstore.py - 向量化與向量資料庫模組
 # ========================================
 # 負責：
-#   1. 初始化 Embedding 模型（HuggingFace）
+#   1. 初始化 Embedding 模型（Google Gemini API）
 #   2. 建立向量資料庫（Chroma）
 #   3. 提供向量資料庫的讀取與重建功能
 
@@ -10,31 +10,20 @@ from typing import List
 from langchain_core.documents import Document
 from langchain_core.vectorstores import VectorStoreRetriever
 
-# 1. 【修改】對齊你新的 config 路徑
 from app.core.config import settings
-
 
 def get_embeddings():
     """
-    根據設定檔的 EMBEDDING_MODE，回傳對應的 Embedding 模型。
-    預設使用 HuggingFace 本地模型。
+    使用 Google Gemini API 進行 Embedding。
+    透過雲端處理，徹底解決 Render 免費主機記憶體不足 (OOM) 的問題。
     """
-    mode = settings.EMBEDDING_MODE.lower()
+    from langchain_google_genai import GoogleGenerativeAIEmbeddings
     
-    if mode == "huggingface":
-        # ---- HuggingFace 本地 Embedding ----
-        from langchain_community.embeddings import HuggingFaceEmbeddings
-        
-        embeddings = HuggingFaceEmbeddings(
-            model_name=settings.HF_EMBEDDING_MODEL,
-            model_kwargs={"device": "cpu"}, 
-            encode_kwargs={"normalize_embeddings": True}, 
-        )
-        print(f"[Embedding] 使用 HuggingFace 模型：{settings.HF_EMBEDDING_MODEL}")
-    
-    else:
-        # 如果不是 huggingface，拋出錯誤，避免誤用到需付費的 OpenAI
-        raise ValueError(f"請在 .env 或 config.py 中將 EMBEDDING_MODE 設定為 'huggingface'")
+    embeddings = GoogleGenerativeAIEmbeddings(
+        model="models/gemini-embedding-001",
+        google_api_key=settings.GEMINI_API_KEY
+    )
+    print(f"[Embedding] 已切換為雲端超輕量 Google 模型：text-embedding-004")
     
     return embeddings
 
