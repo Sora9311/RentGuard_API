@@ -502,18 +502,18 @@
                 // 💡 [除錯用] 把後端真正的回傳格式印在 F12 Console 裡，讓你隨時可以偷看
                 console.log("後端回傳的新聞資料：", responseData); 
                 
-                // 🛡️ 智慧拆包裝：判斷真正的「陣列」藏在哪裡
+                // 🛡️ 終極拆包裝：不管後端取什麼名字，直接找出裡面的「陣列」
                 let newsArray = [];
                 if (Array.isArray(responseData)) {
                     newsArray = responseData; // 如果直接是陣列，直接用
-                } else if (responseData.data && Array.isArray(responseData.data)) {
-                    newsArray = responseData.data; // 如果包裝在 "data" 裡面
-                } else if (responseData.news && Array.isArray(responseData.news)) {
-                    newsArray = responseData.news; // 如果包裝在 "news" 裡面
-                } else if (responseData.items && Array.isArray(responseData.items)) {
-                    newsArray = responseData.items; // 如果包裝在 "items" 裡面
                 } else {
-                    throw new Error("找不到陣列格式的新聞資料");
+                    // 把 Object 裡面的值全部掃一遍，抓出是陣列的那個！
+                    const foundArray = Object.values(responseData).find(val => Array.isArray(val));
+                    if (foundArray) {
+                        newsArray = foundArray;
+                    } else {
+                        throw new Error("找不到陣列格式的新聞資料");
+                    }
                 }
 
                 // 清空原本的「載入中...」文字
