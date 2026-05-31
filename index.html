@@ -490,30 +490,52 @@
         async function fetchLatestNews() {
             const newsList = document.getElementById('news-list');
             try {
-                // 呼叫你的新聞 API (請確保網址正確)
+                // 呼叫你的新聞 API
                 const response = await fetch('https://rentguard-api.onrender.com/api/v1/news/');
                 
                 if (!response.ok) {
                     throw new Error(`網路錯誤: ${response.status}`);
                 }
                 
-                const newsData = await response.json();
+                const responseData = await response.json();
                 
+                // 💡 [除錯用] 把後端真正的回傳格式印在 F12 Console 裡，讓你隨時可以偷看
+                console.log("後端回傳的新聞資料：", responseData); 
+                
+                // 🛡️ 智慧拆包裝：判斷真正的「陣列」藏在哪裡
+                let newsArray = [];
+                if (Array.isArray(responseData)) {
+                    newsArray = responseData; // 如果直接是陣列，直接用
+                } else if (responseData.data && Array.isArray(responseData.data)) {
+                    newsArray = responseData.data; // 如果包裝在 "data" 裡面
+                } else if (responseData.news && Array.isArray(responseData.news)) {
+                    newsArray = responseData.news; // 如果包裝在 "news" 裡面
+                } else if (responseData.items && Array.isArray(responseData.items)) {
+                    newsArray = responseData.items; // 如果包裝在 "items" 裡面
+                } else {
+                    throw new Error("找不到陣列格式的新聞資料");
+                }
+
                 // 清空原本的「載入中...」文字
                 newsList.innerHTML = '';
                 
-                // 假設你的 API 回傳的是一個陣列，裡面有 title(標題) 和 url(連結)
-                // 💡 如果你的 API 回傳的變數名稱不同 (例如叫 link 而不是 url)，請在這裡修改！
-                newsData.forEach(news => {
+                // 確保真的有抓到新聞才跑迴圈
+                if (newsArray.length === 0) {
+                    newsList.innerHTML = '<li style="color: #8c8273; font-size: 0.95rem;">目前沒有最新新聞</li>';
+                    return;
+                }
+
+                // 把真正的新聞陣列拿來生成畫面
+                newsArray.forEach(news => {
                     const li = document.createElement('li');
                     li.style.borderBottom = "1px dashed #ded9cb"; // 加個底線更有質感
                     li.style.paddingBottom = "8px";
                     li.style.marginBottom = "8px";
                     
-                    // 建立超連結
-                    li.innerHTML = `<a href="${news.url || news.link}" target="_blank" style="color: #6a5e4d; text-decoration: none; font-size: 0.95rem;">▪ ${news.title}</a>`;
+                    // 建立超連結 (自動適應 url 或 link 欄位)
+                    const targetUrl = news.url || news.link || "#";
+                    li.innerHTML = `<a href="${targetUrl}" target="_blank" style="color: #6a5e4d; text-decoration: none; font-size: 0.95rem;">▪ ${news.title}</a>`;
                     
-                    // 加入到清單中
                     newsList.appendChild(li);
                 });
 
