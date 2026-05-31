@@ -330,10 +330,10 @@
             <div class="card">
                 <h2>🔍 快捷功能選單</h2>
                 <div class="btn-grid">
-                    <a href="law.html" class="btn">租屋法律查詢</a>
-                    <a href="price.html" class="btn">租金行情查詢</a>
-                    <a href="notice.html" class="btn">租屋注意事項</a>
-                    <a href="links.html" class="btn">推薦租屋網站</a>
+                        <a href="#" onclick="quickAsk('請問租屋時，有哪些法規可以保護房客的權益？'); return false;" class="btn">租屋法律查詢</a>
+                        <a href="https://pip.moi.gov.tw/V3/E/SCRE0105.aspx" target="_blank" class="btn">租金行情查詢</a>
+                        <a href="#" onclick="quickAsk('請問和房東簽約時，有哪些一定要注意的重點和常見陷阱？'); return false;" class="btn">租屋注意事項</a>
+                        <a href="https://www.tmm.org.tw/" target="_blank" class="btn">推薦租屋網站</a>
                 </div>
             </div>
 
@@ -464,7 +464,20 @@
                 submitBtn.style.backgroundColor = ''; // 恢復原設定
             }
         });
+        // 快捷提問功能
+        function quickAsk(questionText) {
+        // 抓到右側的問題輸入框，並填寫問題
+        const messageBox = document.getElementById('message');
+            if (messageBox) {
+                messageBox.value = questionText;
+            }
+        
+            // 抓到送出按鈕並點擊
+            const submitBtn = document.getElementById('submit-btn');
+            if (submitBtn) {
+                submitBtn.click();
+            }
+        }
     </script>
-</body>
 </body>
 </html>
