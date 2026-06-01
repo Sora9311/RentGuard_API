@@ -12,7 +12,7 @@ class Settings(BaseSettings):
 
     # --- LLM 模型設定 ---
     # 預設改為使用 Gemini (如同我們之前討論的，速度快且有免費額度)
-    LLM_MODEL: str = "gemini-1.5-flash"
+    LLM_MODEL: str = "gemini-2.5-flash"
 
     # --- Embedding (文字轉向量) 設定 ---
     # 預設改為 huggingface (本機免費執行)，避免消耗 OpenAI 額度
