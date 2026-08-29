@@ -1,23 +1,33 @@
 import feedparser
+import requests
 
-def fetch_rental_news(limit: int = 5) -> list:
-    """
-    透過 Google News RSS 抓取台灣租屋相關新聞
-    """
-    # Google News RSS搜尋網址(設定關鍵字：台灣 租屋，語言：繁體中文)
-    rss_url = "https://news.google.com/rss/search?q=台灣+租屋&hl=zh-TW&gl=TW&ceid=TW:zh-Hant"
-    
-    # feedparser讀取網址
-    feed = feedparser.parse(rss_url)
-    
+
+GOOGLE_NEWS_URL = "https://news.google.com/rss/search"
+
+
+def fetch_rental_news(limit: int = 5, keyword: str = "台灣 租屋") -> list[dict]:
+    """取得 Google News 的台灣租屋相關新聞。"""
+    response = requests.get(
+        GOOGLE_NEWS_URL,
+        params={
+            "q": keyword,
+            "hl": "zh-TW",
+            "gl": "TW",
+            "ceid": "TW:zh-Hant",
+        },
+        timeout=10,
+    )
+    response.raise_for_status()
+
+    feed = feedparser.parse(response.content)
     news_list = []
-    # 只取前limit筆新聞(預設5筆)
     for entry in feed.entries[:limit]:
+        source = entry.get("source")
         news_list.append({
-            "title": entry.title,
-            "link": entry.link,
-            "published_at": entry.published,
-            "source": entry.source.title if 'source' in entry else "Google News"
+            "title": entry.get("title", "無標題"),
+            "link": entry.get("link", ""),
+            "published_at": entry.get("published", ""),
+            "source": source.get("title", "Google News") if source else "Google News",
         })
-        
+
     return news_list

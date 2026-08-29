@@ -1,5 +1,6 @@
 # 忽略虛擬環境資料夾
 venv/
+.venv/
 
 # 忽略Python暫存檔
 __pycache__/
@@ -10,3 +11,6 @@ __pycache__/
 # 忽略本機測試用的資料庫與測試檔案
 rentguard.db
 *.pdf
+
+# 本機修復時保留的需求檔備份
+requirements.txt.before-repair.bak

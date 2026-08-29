@@ -2,7 +2,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import settings  
-from app.api import chat, contracts, scenarios, news  # 整理重複的 import
+from app.api import chat, contracts, scenarios, news, ptt  # 整理重複的 import
 from app.core.exceptions import RentGuardException, rentguard_exception_handler
 
 # 引入資料庫引擎與模型
@@ -64,3 +64,4 @@ app.include_router(chat.router, prefix="/api/v1/chat", tags=["RAG Q&A"])
 app.include_router(contracts.router, prefix="/api/v1/contracts", tags=["Contract Analysis"])
 app.include_router(scenarios.router, prefix="/api/v1/scenarios", tags=["Scenario Advice"])
 app.include_router(news.router, prefix="/api/v1/news", tags=["Rental News"])
+app.include_router(ptt.router, prefix="/api/v1/ptt", tags=["PTT Rental"])
