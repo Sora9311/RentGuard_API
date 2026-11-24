@@ -23,5 +23,5 @@ async def chat_with_rentguard(request: ChatRequest, db: Session = Depends(get_db
     # 將Service回傳的結果包裝成Pydantic Schema回傳給前端
     return ChatResponse(
         answer=result["answer"],
-        sources=result["sources"]
+        source_documents=result.get("source_documents", [])
     )
