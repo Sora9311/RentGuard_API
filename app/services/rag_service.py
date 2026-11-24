@@ -2,7 +2,8 @@
 
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.documents import Document
-from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
+from langchain_core.messages import BaseMessage
 from app.core.config import settings
 
 # 💡 升級版顧問人設：解決評審說「只會丟法條、沒有解決問題」的痛點
@@ -22,6 +23,8 @@ SYSTEM_PROMPT = """你現在是一位專業且溫暖的台灣租屋法律顧問�
 
 PROMPT_TEMPLATE = ChatPromptTemplate.from_messages([
     ("system", SYSTEM_PROMPT),
+    # 🚀 新增：插入歷史對話記憶的佔位符
+    MessagesPlaceholder(variable_name="chat_history"),
     ("human", "{input}"),
 ])
 
@@ -42,17 +45,22 @@ class RAGService:
         
         print("[RAG Service] 初始化完成，系統就緒！")
 
-    def query(self, question: str) -> Dict[str, Any]:
-        print(f"[查詢] 收到問題：{question}")
+    # 🚀 修改：新增 chat_history 參數
+    def query(self, question: str, chat_history: List[BaseMessage] = None) -> Dict[str, Any]:
+        if chat_history is None:
+            chat_history = []
+            
+        print(f"[查詢] 收到問題：{question} (攜帶 {len(chat_history)} 筆歷史訊息)")
         
-        # 🚀 修正 1：單次檢索 (移除原本重複呼叫的 retriever.invoke)
+        # 單次檢索
         source_docs = self.retriever.invoke(question)
         context = self.format_docs(source_docs)
         
-        # 🚀 修正 2：生成回答並提取純文字 (.content)
+        # 生成回答並提取純文字 (.content)，同時餵入 chat_history
         ai_message = self.llm.invoke(
             PROMPT_TEMPLATE.format_messages(
                 context=context,
+                chat_history=chat_history,
                 input=question,
             )
         )

@@ -15,4 +15,4 @@ class SourceDocument(BaseModel):
 # 定義回傳給前端的Response格式
 class ChatResponse(BaseModel):
     answer: str = Field(..., description="AI 生成的專業回覆")
-    sources: List[str] = Field(default=[], description="參考的法律條文或外部資料來源")
+    source_documents: List[SourceDocument] = Field(default=[], description="參考的法律條文或外部資料來源的詳細內容")
