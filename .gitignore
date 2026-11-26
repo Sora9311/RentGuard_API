@@ -14,3 +14,4 @@ rentguard.db
 
 # 本機修復時保留的需求檔備份
 requirements.txt.before-repair.bak
+
