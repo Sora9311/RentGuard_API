@@ -30,7 +30,7 @@ class Settings(BaseSettings):
     CHUNK_OVERLAP: int = 50      # 相鄰 chunk 之間的重疊字元數（保留上下文）
 
     # --- 檢索設定 ---
-    RETRIEVER_TOP_K: int = 4     # 每次檢索取前 4 筆最相關的法條
+    RETRIEVER_TOP_K: int = 6     # 每次檢索取前 6 筆最相關的法條
 
     # --- 資料來源路徑 ---
     DATA_DIR: str = "./data/raw"
